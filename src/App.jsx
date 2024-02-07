@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 
 import Login from "./pages/Login";
 import Home from "./pages/Home";
-import NewTicket from "./pages/NewTicket";
+import Category from "./pages/Category";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Layout />}>
         <Route path="/" element={<Home />} />
-        <Route path="/newticket" element={<NewTicket />} />
+        <Route path="/category" element={<Category />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Route>
     </Routes>

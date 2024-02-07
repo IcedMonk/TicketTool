@@ -65,7 +65,7 @@ const Navbar = ({ children }) => {
               <span>Dashboard</span>
             </NavLink>
             <NavLink
-              to="/newticket"
+              to="/category"
               className={({ isActive }) =>
                 isActive
                   ? "group flex cursor-pointer items-center bg-gray-800 px-4 py-3 text-gray-200 transition hover:bg-gray-800 hover:text-gray-200"
