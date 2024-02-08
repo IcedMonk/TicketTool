@@ -117,7 +117,7 @@ const Navbar = ({ children }) => {
             </div>
           </header>
           <div className="p-2">
-            <div className="min-h-screen rounded-md border-2 border-gray-300 bg-gray-100 p-1">
+            <div className="min-h-screen max-h-screen overflow-y-auto rounded-md bg-gray-100 border-2 border-gray-300 p-1">
               {children}
             </div>
           </div>
