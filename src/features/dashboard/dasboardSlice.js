@@ -1,41 +1,182 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { createAsyncHandlers } from "../common/asyncHandlers";
-import { getConfig } from "./dasboardApi";
+import {
+  getAgentList,
+  getToken,
+  getAllTickets,
+  getTicketById,
+  updateTicket,
+  getBusinessUnitList,
+  getCategoryList,
+  getPriorityList,
+  getStatusList,
+  getTicketAttachment,
+} from "./dasboardApi";
 
 const initialState = {
   loading: {
-    loadConfig: false,
+    loadUserAuth: false,
+    loadAgentList: false,
+    loadAllTickets: false,
+    loadTicketById: false,
+    loadUpdateTicket: false,
+    loadBusinessUnitList: false,
+    loadCategoryList: false,
+    loadPriorityList: false,
+    loadStatusList: false,
+    loadTicketAttachments: false,
   },
   config: [],
+  allTickets: [],
+  sessionTimedOut: false,
+  userAuth: null,
+  ticketEditState: true,
+  agentList: [],
+  ticketById: null,
+  updateTicket: null,
+  businessUnitList: [],
+  categoryList: [],
+  priorityList: [],
+  statusList: [],
+  ticketAttachments: [],
 };
 
-export const getConfigAsync = createAsyncThunk(
-  "dashboard/getConfig",
-  (params) => getConfig(params)
+export const getTokenAsync = createAsyncThunk("dashboard/getToken", (params) =>
+  getToken(params)
+);
+
+export const getAgentListAsync = createAsyncThunk(
+  "dashboard/getAgentList",
+  (params) => getAgentList(params)
+);
+
+export const getAllTicketsAsync = createAsyncThunk(
+  "dashboard/getAllTickets",
+  (params) => getAllTickets(params)
+);
+
+export const getTicketByIdAsync = createAsyncThunk(
+  "dashboard/getTicketById",
+  (params) => getTicketById(params)
+);
+
+export const updateTicketAsync = createAsyncThunk(
+  "dashboard/updateTicket",
+  (params) => updateTicket(params)
+);
+
+export const getBusinessUnitListAsync = createAsyncThunk(
+  "dashboard/getBusinessUnitList",
+  (params) => getBusinessUnitList(params)
+);
+
+export const getCategoryListAsync = createAsyncThunk(
+  "dashboard/getCategoryList",
+  (params) => getCategoryList(params)
+);
+
+export const getPriorityListAsync = createAsyncThunk(
+  "dashboard/getPriorityList",
+  (params) => getPriorityList(params)
+);
+
+export const getStatusListAsync = createAsyncThunk(
+  "dashboard/getStatusList",
+  (params) => getStatusList(params)
+);
+
+export const getTicketAttachmentsAsync = createAsyncThunk(
+  "dashboard/getTicketAttachments",
+  (params) => getTicketAttachment(params)
 );
 
 const dashboardSlice = createSlice({
-  name: "dasboard", // name it for what you are going to use
+  name: "dasboard",
   initialState,
   reducers: {
     logoutUser: () => initialState,
-    showAlert: (state, action) => {
-      state.showAlert = true;
-      state.alertMessage = action.payload.message;
-      state.alertType = action.payload.type;
+    setSessionTimedOut: (state, action) => {
+      state.sessionTimedOut = action.payload;
+    },
+    setTicketEditState: (state, action) => {
+      state.ticketEditState = action.payload;
     },
   },
   extraReducers: (builder) => {
     createAsyncHandlers(
       builder,
-      getConfigAsync,
-      "config",
-      "loadConfig",
-      "CONFIG_ERROR"
+      getTokenAsync,
+      "userAuth",
+      "loadUserAuth",
+      "LOADUSERAUTH_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getAgentListAsync,
+      "agentList",
+      "loadAgentList",
+      "LOADAGENTLIST_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getAllTicketsAsync,
+      "allTickets",
+      "loadAllTickets",
+      "LOADALLTICKETS_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getTicketByIdAsync,
+      "ticketById",
+      "loadTicketById",
+      "LOADTICKETBYID_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      updateTicketAsync,
+      "updateTicket",
+      "loadUpdateTicket",
+      "LOADUPDATETICKET_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getBusinessUnitListAsync,
+      "businessUnitList",
+      "loadBusinessUnitList",
+      "LOADBUSINESSUNITLIST_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getCategoryListAsync,
+      "categoryList",
+      "loadCategoryList",
+      "LOADCATEGORYLIST_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getPriorityListAsync,
+      "priorityList",
+      "loadPriorityList",
+      "LOADPRIORITYLIST_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getStatusListAsync,
+      "statusList",
+      "loadStatusList",
+      "LOADSTATUSLIST_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getTicketAttachmentsAsync,
+      "ticketAttachments",
+      "loadTicketAttachments",
+      "LOADTICKETATTACHMENTS_ERROR"
     );
   },
 });
 
-export const { logoutUser, showAlert } = dashboardSlice.actions;
+export const { logoutUser, setSessionTimedOut, setTicketEditState } =
+  dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

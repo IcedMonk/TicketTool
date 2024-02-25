@@ -1,14 +1,26 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import {
+  logoutUser,
+  setSessionTimedOut,
+} from "../features/dashboard/dasboardSlice";
 
 const Navbar = ({ children }) => {
   const [sideBar, setSideBar] = useState(false);
   const sidebarRef = useRef(null);
+  const dispatch = useDispatch();
 
   const handleClickOutside = (event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
       setSideBar(false);
     }
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    dispatch(setSessionTimedOut(false));
   };
 
   useEffect(() => {
@@ -65,7 +77,7 @@ const Navbar = ({ children }) => {
               <span>Dashboard</span>
             </NavLink>
             <NavLink
-              to="/newticket"
+              to="/new-ticket"
               className={({ isActive }) =>
                 isActive
                   ? "group flex cursor-pointer items-center bg-gray-800 px-4 py-3 text-gray-200 transition hover:bg-gray-800 hover:text-gray-200"
@@ -110,6 +122,7 @@ const Navbar = ({ children }) => {
               <button
                 value="logout"
                 className=" px-5 py-3 text-base font-medium text-white bg-gray-600 border border-transparent rounded-lg shadow hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 sm:px-10"
+                onClick={handleLogout}
               >
                 Logout
               </button>
