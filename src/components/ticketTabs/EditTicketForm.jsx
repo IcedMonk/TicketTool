@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  dataHasBeenFetched,
   getAgentListAsync,
   getBusinessUnitListAsync,
   getCategoryListAsync,
@@ -18,6 +19,7 @@ function EditTicketForm() {
     statusList = [],
     agentList = [],
     loading,
+    dataFetched,
   } = useSelector((state) => state.dashboard);
 
   const [credentials, setCredentials] = useState(
@@ -44,12 +46,15 @@ function EditTicketForm() {
   );
 
   useEffect(() => {
-    dispatch(getBusinessUnitListAsync());
-    dispatch(getCategoryListAsync());
-    dispatch(getPriorityListAsync());
-    dispatch(getStatusListAsync());
-    dispatch(getAgentListAsync());
-  }, [dispatch]);
+    if (!dataFetched) {
+      dispatch(getBusinessUnitListAsync());
+      dispatch(getCategoryListAsync());
+      dispatch(getPriorityListAsync());
+      dispatch(getAgentListAsync());
+      dispatch(getStatusListAsync());
+      dispatch(dataHasBeenFetched());
+    }
+  }, [dispatch, dataFetched]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

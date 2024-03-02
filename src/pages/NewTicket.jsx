@@ -1,31 +1,129 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import { convertToBase64 } from "../utils/Helper";
+import {
+  createTicketAsync,
+  dataHasBeenFetched,
+  getAgentListAsync,
+  getBusinessUnitListAsync,
+  getCategoryListAsync,
+  getPriorityListAsync,
+} from "../features/dashboard/dasboardSlice";
+import { useNavigate } from "react-router-dom";
 
 function NewTicket() {
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
   const {
     businessUnitList = [],
     categoryList = [],
     priorityList = [],
     agentList = [],
     loading,
+    userAuth,
+    createTicket,
+    dataFetched,
   } = useSelector((state) => state.dashboard);
-  const [credentials, setCredentials] = useState({});
+  const [credentials, setCredentials] = useState({
+    line_of_Business_id: 1,
+    priority_id: 4,
+    category_id: 1,
+    status_id: 1,
+  });
+  const [filename, setfilename] = useState();
+  const [postImage, setPostImage] = useState({ myFile: "" });
+
+  // Dispatch actions to fetch data if lists are empty
+  useEffect(() => {
+    if (!dataFetched) {
+      dispatch(getBusinessUnitListAsync());
+      dispatch(getCategoryListAsync());
+      dispatch(getPriorityListAsync());
+      dispatch(getAgentListAsync());
+      dispatch(dataHasBeenFetched());
+    }
+  }, [dispatch, dataFetched]);
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    setfilename(e.target.files[0].name);
+    const base64 = await convertToBase64(file);
+    setPostImage({ ...postImage, myFile: base64 });
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // Fields to convert to numbers
+    const fieldsToConvert = [
+      "agent_id",
+      "category_id",
+      "line_of_Business_id",
+      "priority_id",
+    ];
     setCredentials((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: fieldsToConvert.includes(name) ? parseInt(value, 10) : value,
+      status_id: name === "agent_id" && value ? 2 : prev.status_id,
     }));
   };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (postImage.myFile === "") {
+      const formData = {
+        request: {
+          ...credentials,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          due_at: new Date().toISOString(),
+          user_id: userAuth.id,
+          category: credentials.category_id,
+        },
+      };
+      dispatch(createTicketAsync(formData));
+      setTimeout(() => {
+        createTicket.status === 1 && Navigate("/");
+        createTicket.status === 1 &&
+          toast.success("Ticket created successfully");
+        createTicket.status === 0 && toast.error("Failed to create ticket");
+      }, 3000);
+    } else if (postImage.myFile !== "") {
+      const formData = {
+        request: {
+          ...credentials,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          due_at: new Date().toISOString(),
+          user_id: userAuth.id,
+          category: credentials.category_id,
+        },
+        attachments: [
+          {
+            file_Name: filename,
+            data: postImage.myFile,
+          },
+        ],
+      };
+      dispatch(createTicketAsync(formData));
+      setTimeout(() => {
+        createTicket.status === 1 && Navigate("/");
+        createTicket.status === 1 &&
+          toast.success("Ticket created successfully");
+        createTicket.status === 0 && toast.error("Failed to create ticket");
+      }, 3000);
+    }
+  };
+
   return (
     <div className="card mx-auto m-2 bg-base-100 shadow-xl">
       <div className="card-body">
         <h2 className="card-title">New Ticket</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="mb-6 grid gap-6 md:grid-cols-2">
             <div>
               <label
-                for="subject"
+                htmlFor="subject"
                 className="mb-2 block text-sm font-medium text-gray-900 "
               >
                 Subject
@@ -35,11 +133,13 @@ function NewTicket() {
                 id="subject"
                 placeholder="Type here"
                 className="input input-bordered w-full"
+                name="subject"
+                onChange={handleInputChange}
               />
             </div>
             <div>
               <label
-                for="sku"
+                htmlFor="sku"
                 className="mb-2 block text-sm font-medium text-gray-900 "
               >
                 SKU
@@ -49,11 +149,13 @@ function NewTicket() {
                 placeholder="Type here"
                 id="sku"
                 className="input input-bordered w-full"
+                name="sku"
+                onChange={handleInputChange}
               />
             </div>
             <div>
               <label
-                for="ref_no"
+                htmlFor="ref_no"
                 className="mb-2 block text-sm font-medium text-gray-900 "
               >
                 Customer Ref. No
@@ -63,11 +165,13 @@ function NewTicket() {
                 type="text"
                 placeholder="Type here"
                 className="input input-bordered w-full"
+                name="customer_Ref_No"
+                onChange={handleInputChange}
               />
             </div>
             <div>
               <label
-                for="sunland_ref_no"
+                htmlFor="sunland_ref_no"
                 className="mb-2 block text-sm font-medium text-gray-900 "
               >
                 Sunland Ref. No
@@ -77,11 +181,13 @@ function NewTicket() {
                 id="sunland_ref_no"
                 placeholder="Type here"
                 className="input input-bordered w-full"
+                name="sunland_Ref_No"
+                onChange={handleInputChange}
               />
             </div>
             <div>
               <label
-                for="lob"
+                htmlFor="lob"
                 className="mb-2 block text-sm font-medium text-gray-900"
               >
                 Line Of Business
@@ -90,6 +196,7 @@ function NewTicket() {
                 className="select select-bordered w-full"
                 name="line_of_Business_id"
                 onChange={handleInputChange}
+                value={credentials.line_of_Business_id}
                 id="lob"
               >
                 {loading.loadUpdateTicket ? (
@@ -106,7 +213,7 @@ function NewTicket() {
             </div>
             <div>
               <label
-                for="category_id"
+                htmlFor="category_id"
                 className="mb-2 block text-sm font-medium text-gray-900"
               >
                 Category
@@ -116,6 +223,7 @@ function NewTicket() {
                 name="category_id"
                 id="category_id"
                 onChange={handleInputChange}
+                value={credentials.category_id}
               >
                 {loading.loadCategoryList ? (
                   <option value="">Loading...</option>
@@ -131,7 +239,7 @@ function NewTicket() {
             </div>
             <div>
               <label
-                for="priority_id"
+                htmlFor="priority_id"
                 className="mb-2 block text-sm font-medium text-gray-900"
               >
                 Priority
@@ -141,6 +249,7 @@ function NewTicket() {
                 name="priority_id"
                 id="priority_id"
                 onChange={handleInputChange}
+                value={credentials.priority_id}
               >
                 {loading.loadPriorityList ? (
                   <option value="">Loading...</option>
@@ -156,7 +265,7 @@ function NewTicket() {
             </div>
             <div>
               <label
-                for="agent_id"
+                htmlFor="agent_id"
                 className="mb-2 block text-sm font-medium text-gray-900"
               >
                 Assign To
@@ -182,38 +291,56 @@ function NewTicket() {
           </div>
           <div className="mb-6">
             <label
-              for="content"
+              htmlFor="description"
               className="mb-2 block text-sm font-medium text-gray-900"
             >
               Content
             </label>
             <textarea
-              id="content"
+              id="description"
               className="textarea textarea-bordered w-full"
-              placeholder="Content"
+              placeholder="Description"
+              onChange={handleInputChange}
+              name="description"
             ></textarea>
           </div>
 
           <div className="mb-6 flex">
             <div
+              onClick={() => document.getElementById("camera-input").click()}
               id="multi-upload-button"
-              class="inline-flex cursor-pointer items-center rounded-l border border-gray-600 bg-gray-600 px-4 py-2 text-sm font-semibold tracking-widest text-white transition hover:bg-gray-500 focus:border-gray-900 focus:outline-none focus:ring focus:ring-gray-300 active:bg-gray-900 disabled:opacity-25"
+              className="inline-flex cursor-pointer items-center rounded-l border border-gray-600 bg-gray-600 px-4 py-2 text-sm font-semibold tracking-widest text-white transition hover:bg-gray-500 focus:border-gray-900 focus:outline-none focus:ring focus:ring-gray-300 active:bg-gray-900 disabled:opacity-25"
             >
               Upload
             </div>
-            <div class="flex w-full items-center justify-between rounded-r-md border border-gray-300">
-              <span id="multi-upload-text" class="p-2">
-                File
+            <div className="flex w-full items-center justify-between rounded-r-md border border-gray-300">
+              <span id="multi-upload-text" className="p-2">
+                {filename ? filename : "No file selected"}
               </span>
-              <button id="multi-upload-delete" class="hidden">
+              <button
+                id="multi-upload-delete"
+                className={!filename ? "hidden" : ""}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setfilename("");
+                  setPostImage({ myFile: "" });
+                }}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4 mr-3 fill-current text-red-700"
+                  className="h-4 w-4 mr-3 fill-current text-red-700"
                   viewBox="0 0 320 512"
                 >
                   <path d="M310.6 361.4c12.5 12.5 12.5 32.75 0 45.25C304.4 412.9 296.2 416 288 416s-16.38-3.125-22.62-9.375L160 301.3L54.63 406.6C48.38 412.9 40.19 416 32 416S15.63 412.9 9.375 406.6c-12.5-12.5-12.5-32.75 0-45.25l105.4-105.4L9.375 150.6c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 210.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0s12.5 32.75 0 45.25l-105.4 105.4L310.6 361.4z" />
                 </svg>
               </button>
+              <input
+                type="file"
+                id="camera-input"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
             </div>
           </div>
 

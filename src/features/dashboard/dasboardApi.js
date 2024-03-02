@@ -93,9 +93,8 @@ export const createTicket = async (ticketDetails) => {
   try {
     const response = await api.post(`/Tickets/addTicket`, ticketDetails);
     if (response.status === 200) {
-      response.data.created = true;
+      return { status: 1, message: response.data };
     }
-    return response.data;
   } catch (error) {
     return { status: 0, message: error.message };
   }

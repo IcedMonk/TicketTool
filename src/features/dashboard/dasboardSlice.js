@@ -11,6 +11,7 @@ import {
   getPriorityList,
   getStatusList,
   getTicketAttachment,
+  createTicket,
 } from "./dasboardApi";
 
 const initialState = {
@@ -25,12 +26,13 @@ const initialState = {
     loadPriorityList: false,
     loadStatusList: false,
     loadTicketAttachments: false,
+    loadCreateTicket: false,
   },
   config: [],
   allTickets: [],
   sessionTimedOut: false,
   userAuth: null,
-  ticketEditState: true,
+  ticketEditState: false,
   agentList: [],
   ticketById: null,
   updateTicket: null,
@@ -39,6 +41,7 @@ const initialState = {
   priorityList: [],
   statusList: [],
   ticketAttachments: [],
+  dataFetched: false,
 };
 
 export const getTokenAsync = createAsyncThunk("dashboard/getToken", (params) =>
@@ -90,6 +93,11 @@ export const getTicketAttachmentsAsync = createAsyncThunk(
   (params) => getTicketAttachment(params)
 );
 
+export const createTicketAsync = createAsyncThunk(
+  "dashboard/createTicket",
+  (params) => createTicket(params)
+);
+
 const dashboardSlice = createSlice({
   name: "dasboard",
   initialState,
@@ -100,6 +108,9 @@ const dashboardSlice = createSlice({
     },
     setTicketEditState: (state, action) => {
       state.ticketEditState = action.payload;
+    },
+    dataHasBeenFetched: (state, action) => {
+      state.dataFetched = true;
     },
   },
   extraReducers: (builder) => {
@@ -173,10 +184,21 @@ const dashboardSlice = createSlice({
       "loadTicketAttachments",
       "LOADTICKETATTACHMENTS_ERROR"
     );
+    createAsyncHandlers(
+      builder,
+      createTicketAsync,
+      "createTicket",
+      "loadCreateTicket",
+      "LOADCREATETICKET_ERROR"
+    );
   },
 });
 
-export const { logoutUser, setSessionTimedOut, setTicketEditState } =
-  dashboardSlice.actions;
+export const {
+  logoutUser,
+  setSessionTimedOut,
+  setTicketEditState,
+  dataHasBeenFetched,
+} = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

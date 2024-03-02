@@ -2,7 +2,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 function TicketView() {
-  const { ticketById } = useSelector((state) => state.dashboard);
+  const ticket = useSelector((state) => state.dashboard.ticketById.ticket);
+
   const {
     created_at,
     subject,
@@ -12,13 +13,12 @@ function TicketView() {
     status,
     priority,
     user_name,
-    user_email,
     category,
     sunland_Ref_No,
     customer_Ref_No,
     statusColor,
     priorityColor,
-  } = ticketById.ticket;
+  } = ticket;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

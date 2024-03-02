@@ -7,15 +7,16 @@ import {
   getTicketByIdAsync,
   setTicketEditState,
 } from "../features/dashboard/dasboardSlice";
-import TicketView from "../components/ticketTabs/ticketView";
 import TicketComments from "../components/ticketTabs/TicketComments";
 import EditTicketForm from "../components/ticketTabs/EditTicketForm";
 import TicketAttachment from "../components/ticketTabs/TicketAttachment";
+import TicketView from "../components/ticketTabs/TicketView";
 
 function Ticket() {
   const dispatch = useDispatch();
   const { ticketId } = useParams();
   const [activeTab, setActiveTab] = useState(1);
+
   const { ticketEditState, ticketAttachments, loading } = useSelector(
     (state) => state.dashboard
   );
@@ -49,6 +50,8 @@ function Ticket() {
             <div>Loading...</div>
           ) : ticketEditState ? (
             <EditTicketForm />
+          ) : loading.loadTicketById ? (
+            <div>Loading...</div>
           ) : (
             <TicketView />
           )}
