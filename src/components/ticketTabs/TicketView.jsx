@@ -1,8 +1,18 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { getTicketByIdAsync } from "../../features/dashboard/dasboardSlice";
 
 function TicketView() {
-  const ticket = useSelector((state) => state.dashboard.ticketById.ticket);
+  const dispatch = useDispatch();
+  const { ticketId } = useParams();
+  const { ticketById } = useSelector((state) => state.dashboard);
+
+  useEffect(() => {
+    if (!ticketById) {
+      dispatch(getTicketByIdAsync({ ticketId }));
+    }
+  }, [dispatch, ticketById]);
 
   const {
     created_at,
@@ -18,7 +28,7 @@ function TicketView() {
     customer_Ref_No,
     statusColor,
     priorityColor,
-  } = ticket;
+  } = ticketById?.ticket || {};
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

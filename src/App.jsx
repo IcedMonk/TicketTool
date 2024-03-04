@@ -10,10 +10,12 @@ import Home from "./pages/Home";
 import Ticket from "./pages/Ticket";
 import AuthHoc from "./components/AuthHoc";
 import NewTicket from "./pages/NewTicket";
+import User from "./pages/User";
 
 const WrappedHome = AuthHoc(Home);
 const WrappedTicket = AuthHoc(Ticket);
 const WrappedNewTicket = AuthHoc(NewTicket);
+const WrappedUser = AuthHoc(User);
 
 function App() {
   return (
@@ -23,6 +25,7 @@ function App() {
         <Route path="/" element={<WrappedHome />} />
         <Route path="/new-ticket" element={<WrappedNewTicket />} />
         <Route path="/ticket/:ticketId" element={<WrappedTicket />} />
+        <Route path="/user" element={<WrappedUser />} />
         <Route path="*" element={<h1>Not Found</h1>} />
       </Route>
     </Routes>

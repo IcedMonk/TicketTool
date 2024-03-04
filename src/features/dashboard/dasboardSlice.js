@@ -12,6 +12,8 @@ import {
   getStatusList,
   getTicketAttachment,
   createTicket,
+  getUserList,
+  updateUser,
 } from "./dasboardApi";
 
 const initialState = {
@@ -27,6 +29,8 @@ const initialState = {
     loadStatusList: false,
     loadTicketAttachments: false,
     loadCreateTicket: false,
+    loadUserList: false,
+    loadUpdateUser: false,
   },
   config: [],
   allTickets: [],
@@ -42,6 +46,9 @@ const initialState = {
   statusList: [],
   ticketAttachments: [],
   dataFetched: false,
+  userList: [],
+  createTicket: null,
+  updateUser: null,
 };
 
 export const getTokenAsync = createAsyncThunk("dashboard/getToken", (params) =>
@@ -96,6 +103,16 @@ export const getTicketAttachmentsAsync = createAsyncThunk(
 export const createTicketAsync = createAsyncThunk(
   "dashboard/createTicket",
   (params) => createTicket(params)
+);
+
+export const getUserListAsync = createAsyncThunk(
+  "dashboard/getUserList",
+  (params) => getUserList(params)
+);
+
+export const updateUserAsync = createAsyncThunk(
+  "dashboard/updateUser",
+  (params) => updateUser(params)
 );
 
 const dashboardSlice = createSlice({
@@ -190,6 +207,20 @@ const dashboardSlice = createSlice({
       "createTicket",
       "loadCreateTicket",
       "LOADCREATETICKET_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      getUserListAsync,
+      "userList",
+      "loadUserList",
+      "LOADUSERLIST_ERROR"
+    );
+    createAsyncHandlers(
+      builder,
+      updateUserAsync,
+      "updateUser",
+      "loadUpdateUser",
+      "LOADUPDATEUSER_ERROR"
     );
   },
 });

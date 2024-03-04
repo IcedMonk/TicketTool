@@ -33,6 +33,15 @@ export const getAgentList = async () => {
   }
 };
 
+export const getUserList = async () => {
+  try {
+    const response = await api.get("/Users/getUserList");
+    return response.data;
+  } catch (error) {
+    return { status: 0, message: error.message };
+  }
+};
+
 export const getCategoryList = async () => {
   try {
     const response = await api.get("/Category/getCategoryList");
@@ -124,6 +133,17 @@ export const getTicketAttachment = async ({ ticketId }) => {
       `/Tickets/getAttachments?ticketId=${ticketId}`
     );
     return response.data;
+  } catch (error) {
+    return { status: 0, message: error.message };
+  }
+};
+
+export const updateUser = async (userDetails) => {
+  try {
+    const response = await api.post(`/Users/UpdUser`, userDetails);
+    if (response.status === 200) {
+      return { status: 1, message: response.data };
+    }
   } catch (error) {
     return { status: 0, message: error.message };
   }

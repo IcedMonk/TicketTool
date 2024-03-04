@@ -95,6 +95,25 @@ const Navbar = ({ children }) => {
               </svg>
               <span>New Ticket</span>
             </NavLink>
+            <NavLink
+              to="/user"
+              className={({ isActive }) =>
+                isActive
+                  ? "group flex cursor-pointer items-center bg-gray-800 px-4 py-3 text-gray-200 transition hover:bg-gray-800 hover:text-gray-200"
+                  : "group flex cursor-pointer items-center px-4 py-3 transition hover:bg-gray-800 hover:text-gray-200"
+              }
+            >
+              <svg
+                className="mr-2 h-5 w-5 shrink-0 text-gray-400 transition group-hover:text-gray-300"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M5 3a1 1 0 000 2c5.523 0 10 4.477 10 10a1 1 0 102 0C17 8.373 11.627 3 5 3z" />
+                <path d="M4 9a1 1 0 011-1 7 7 0 017 7 1 1 0 11-2 0 5 5 0 00-5-5 1 1 0 01-1-1zM3 15a2 2 0 114 0 2 2 0 01-4 0z" />
+              </svg>
+              <span>Users</span>
+            </NavLink>
           </nav>
         </nav>
         <div className="ml-0 transition md:ml-60">
